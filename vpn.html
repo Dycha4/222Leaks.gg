@@ -123,8 +123,8 @@
   <h1>🛡 VPN Konto</h1>
 
   <div class="details">
-    <h2>🔥 VPN - 64 zł</h2>
-    <p>
+    <h2 id="productTitle">🔥 VPN - 64 zł</h2>
+    <p id="productDetails">
       <span><i>📦</i> <span class="highlight">Nowe konto VPN</span></span><br>
       <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
       <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
@@ -135,19 +135,33 @@
   </div>
 
   <script>
+    // Kursy walut
+    const currencyRates = {
+      pl: 1, // PLN
+      en: 0.22, // EUR (przykład przelicznika)
+    };
+
     // Zmiana języka
     function changeLanguage(language) {
       localStorage.setItem('language', language);
       translatePage(language);
     }
 
+    // Przeliczanie ceny
+    function convertPrice(price, currency) {
+      return (price * currencyRates[currency]).toFixed(2);
+    }
+
     // Tłumaczenie strony
     function translatePage(language) {
+      const priceInPLN = 64; // Cena w PLN
+      const convertedPrice = convertPrice(priceInPLN, language);
+
       if (language === 'pl') {
         document.querySelector('h1').innerText = "🛡 VPN Konto";
         document.querySelector('.buy-button').innerText = "Przejdź do zakupu";
-        document.querySelector('.details h2').innerText = "🔥 VPN - 64 zł";
-        document.querySelector('.details p').innerHTML = ` 
+        document.querySelector('.details h2').innerText = `🔥 VPN - ${priceInPLN} zł`;
+        document.querySelector('.details p').innerHTML = `
           <span><i>📦</i> <span class="highlight">Nowe konto VPN</span></span><br>
           <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
           <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
@@ -157,13 +171,13 @@
       } else if (language === 'en') {
         document.querySelector('h1').innerText = "🛡 VPN Account";
         document.querySelector('.buy-button').innerText = "Go to purchase";
-        document.querySelector('.details h2').innerText = "🔥 VPN - 64 PLN";
+        document.querySelector('.details h2').innerText = `🔥 VPN - ${convertedPrice} EUR`;
         document.querySelector('.details p').innerHTML = `
           <span><i>📦</i> <span class="highlight">New VPN account</span></span><br>
           <span><i>🛡</i> Full access (login + password)</span><br>
           <span><i>✉️</i> Ability to change the email</span><br><br>
           <span class="note">⏰ Fulfillment: up to 24h</span><br>
-          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4 PLN</span><br>
+          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4 EUR</span><br>
         `;
       }
     }
