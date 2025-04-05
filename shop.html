@@ -11,12 +11,15 @@
       color: #fff;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
     header {
       display: flex;
       align-items: center;
       background-color: #1f1f1f;
       padding: 15px 30px;
+      position: relative;
+      justify-content: space-between;
     }
     .logo {
       font-size: 24px;
@@ -33,10 +36,39 @@
     .logo:hover {
       opacity: 0.9;
     }
+    .currency-selector {
+      position: absolute;
+      top: 20px;
+      right: 130px;
+      background-color: #1e1e2f;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .currency-selector:hover {
+      background-color: #8a2be2;
+    }
+    .language-selector {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+    }
+    .language-selector img {
+      width: 50px;
+      height: 45px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
     h1 {
       text-align: center;
       color: #8a2be2;
       margin: 40px 0;
+      font-size: 28px;
     }
     .grid {
       display: flex;
@@ -54,11 +86,13 @@
       text-align: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
       width: 200px;
+      border: 2px solid transparent;
     }
     .item:hover {
       transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     }
     .item img {
       width: 60px;
@@ -68,29 +102,82 @@
     .item h3 {
       margin: 10px 0;
       color: #c084fc;
+      font-size: 18px;
     }
     .price {
       font-size: 18px;
       color: #8a2be2;
       font-weight: bold;
     }
+    .price span {
+      font-size: 14px;
+      color: #bbb;
+    }
+    .alert-box {
+      background-color: #ffcc00;
+      color: #121212;
+      padding: 20px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      display: none;
+    }
+    .alert-box.active {
+      display: block;
+    }
+    .alert-box button {
+      background-color: #8a2be2;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .alert-box button:hover {
+      background-color: #a855f7;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Alert for currency selection -->
+  <div class="alert-box" id="currencyAlert">
+    <p>🔔 Please select your preferred currency (PLN or EUR) before proceeding!</p>
+    <button onclick="dismissAlert()">OK</button>
+  </div>
+
   <header>
     <a href="index.html" class="logo">222<span>LEAKS.GG</span></a>
+    <div class="currency-selector">
+      <select id="currencySelect" onchange="updatePrices()">
+        <option value="PLN">PLN</option>
+        <option value="EUR">EUR</option>
+      </select>
+    </div>
+    <!-- Language selector -->
+    <div class="language-selector">
+      <img src="pl-flag.png" alt="Polish" id="plFlag" onclick="changeLanguage('pl')">
+      <img src="gb-flag.png" alt="English" id="enFlag" onclick="changeLanguage('en')">
+    </div>
   </header>
 
-  <h1>📦 Nasz Cennik</h1>
+  <h1 id="title">📦 Nasz Cennik</h1>
 
   <div class="grid">
     <!-- Rockstar Link -->
     <a href="rockstar.html">
       <div class="item">
         <img src="ROCKSTAR.png" alt="Rockstar">
-        <h3>Rockstar</h3>
-        <p class="price">2.15 zł</p>
+        <h3 id="rockstarName">Rockstar</h3>
+        <p class="price" data-pln="2.15" data-eur="0.5">2.15 zł</p>
       </div>
     </a>
 
@@ -98,8 +185,8 @@
     <a href="discord.html">
       <div class="item">
         <img src="DISCORD.png" alt="Discord">
-        <h3>Discord</h3>
-        <p class="price">5 zł</p>
+        <h3 id="discordName">Discord</h3>
+        <p class="price" data-pln="2.56" data-eur="0.60">2.56 zł</p>
       </div>
     </a>
 
@@ -107,8 +194,8 @@
     <a href="steam.html">
       <div class="item">
         <img src="STEAM.png" alt="Steam">
-        <h3>Steam</h3>
-        <p class="price">15 zł</p>
+        <h3 id="steamName">Steam</h3>
+        <p class="price" data-pln="1" data-eur="0.23">1 zł</p>
       </div>
     </a>
 
@@ -116,11 +203,67 @@
     <a href="vpn.html">
       <div class="item">
         <img src="VPN.png" alt="VPN">
-        <h3>VPN</h3>
-        <p class="price">8 zł</p>
+        <h3 id="vpnName">VPN</h3>
+        <p class="price" data-pln="64" data-eur="15">64 zł</p>
       </div>
     </a>
   </div>
+
+  <script>
+    // Wyświetlanie alertu za każdym razem przy wejściu na stronę
+    document.getElementById("currencyAlert").classList.add("active");
+
+    // Funkcja do zamknięcia alertu
+    function dismissAlert() {
+      document.getElementById("currencyAlert").classList.remove("active");
+    }
+
+    // Przeliczanie cen
+    function updatePrices() {
+      const currency = document.getElementById("currencySelect").value;
+      const prices = document.querySelectorAll(".price");
+
+      prices.forEach(price => {
+        const pln = price.getAttribute("data-pln");
+        const eur = price.getAttribute("data-eur");
+
+        if (currency === "PLN") {
+          price.innerHTML = `${pln} zł <span>PLN</span>`;
+        } else if (currency === "EUR") {
+          price.innerHTML = `${eur} € <span>EUR</span>`;
+        }
+      });
+    }
+
+    // Zmiana języka
+    function changeLanguage(language) {
+      localStorage.setItem('language', language);
+      translatePage(language);
+    }
+
+    // Tłumaczenie strony
+    function translatePage(language) {
+      if (language === 'pl') {
+        document.getElementById("title").innerText = "📦 Nasz Cennik";
+        document.getElementById("rockstarName").innerText = "Rockstar";
+        document.getElementById("discordName").innerText = "Discord";
+        document.getElementById("steamName").innerText = "Steam";
+        document.getElementById("vpnName").innerText = "VPN";
+      } else if (language === 'en') {
+        document.getElementById("title").innerText = "📦 Our Pricing";
+        document.getElementById("rockstarName").innerText = "Rockstar";
+        document.getElementById("discordName").innerText = "Discord";
+        document.getElementById("steamName").innerText = "Steam";
+        document.getElementById("vpnName").innerText = "VPN";
+      }
+    }
+
+    // Inicjalizacja
+    window.onload = function() {
+      const language = localStorage.getItem('language') || 'pl';
+      translatePage(language);
+    }
+  </script>
 
 </body>
 </html>
