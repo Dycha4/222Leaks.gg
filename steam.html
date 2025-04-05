@@ -17,6 +17,7 @@
       align-items: center;
       background-color: #1f1f1f;
       padding: 15px 30px;
+      justify-content: space-between;
     }
     .logo {
       font-size: 24px;
@@ -71,29 +72,108 @@
     .buy-button:hover {
       background-color: #a855f7;
     }
+    .details p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .details p span {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .details p span i {
+      font-size: 22px;
+      margin-right: 10px;
+      color: #8a2be2;
+    }
+    .details p .highlight {
+      color: #8a2be2;
+      font-weight: bold;
+    }
+    .details p .note {
+      font-style: italic;
+      color: #bbb;
+    }
+    .language-selector {
+      display: flex;
+      align-items: center;
+    }
+    .language-selector img {
+      width: 30px;
+      height: 25px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <a href="shop.html" class="back-arrow">⬅</a>
-    <a href="index.html" class="logo">222<span>LEAKS.GG</span></a>
+    <a href="shop.html" class="logo">222<span>LEAKS.GG</span></a>
+
+    <!-- Language selector in the top-right corner -->
+    <div class="language-selector">
+      <img src="pl-flag.png" alt="Polish" id="plFlag" onclick="changeLanguage('pl')">
+      <img src="gb-flag.png" alt="English" id="enFlag" onclick="changeLanguage('en')">
+    </div>
   </header>
 
-  <h1>🎮 Steam Account</h1>
+  <h1>🎮 Steam Konto</h1>
 
   <div class="details">
-    <h2>🔥 Steam Account - 15.00zł</h2>
+    <h2>🔥 Steam Account - 1 zł</h2>
     <p>
-      📦 Nowe konto Steam<br>
-      🛡 Pełny dostęp (loginy + hasło)<br>
-      ✉️ Możliwość zmiany maila<br><br>
-      ⏰ Realizacja: do 24h<br>
-      💳 BLIK / PAYPAL / PSC +0.4zł<br>
-      📬 Kontakt: `TICKET`
+      <span><i>📦</i> <span class="highlight">Nowe konto Steam</span></span><br>
+      <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
+      <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
+      <span class="note">⏰ Realizacja: do 24h</span><br>
+      <span><i>💳</i> BLIK / PAYPAL / PSC +0.4zł</span><br>
     </p>
     <a href="https://discord.gg/8wDw66Ddzn" class="buy-button">Przejdź do zakupu</a>
   </div>
+
+  <script>
+    // Zmiana języka
+    function changeLanguage(language) {
+      localStorage.setItem('language', language);
+      translatePage(language);
+    }
+
+    // Tłumaczenie strony
+    function translatePage(language) {
+      if (language === 'pl') {
+        document.querySelector('h1').innerText = "🎮 Steam Konto";
+        document.querySelector('.buy-button').innerText = "Przejdź do zakupu";
+        document.querySelector('.details h2').innerText = "🔥 Steam Account - 1 zł";
+        document.querySelector('.details p').innerHTML = ` 
+          <span><i>📦</i> <span class="highlight">Nowe konto Steam</span></span><br>
+          <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
+          <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
+          <span class="note">⏰ Realizacja: do 24h</span><br>
+          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4zł</span><br>
+        `;
+      } else if (language === 'en') {
+        document.querySelector('h1').innerText = "🎮 Steam Account";
+        document.querySelector('.buy-button').innerText = "Go to purchase";
+        document.querySelector('.details h2').innerText = "🔥 Steam Account - 1 PLN";
+        document.querySelector('.details p').innerHTML = `
+          <span><i>📦</i> <span class="highlight">New Steam account</span></span><br>
+          <span><i>🛡</i> Full access (login + password)</span><br>
+          <span><i>✉️</i> Ability to change the email</span><br><br>
+          <span class="note">⏰ Fulfillment: up to 24h</span><br>
+          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4 PLN</span><br>
+        `;
+      }
+    }
+
+    // Inicjalizacja
+    window.onload = function() {
+      const language = localStorage.getItem('language') || 'pl';
+      translatePage(language);
+    }
+  </script>
 
 </body>
 </html>
