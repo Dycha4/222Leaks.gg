@@ -113,7 +113,6 @@
     <a href="shop.html" class="back-arrow">⬅</a>
     <a href="shop.html" class="logo">222<span>LEAKS.GG</span></a>
 
-    <!-- Language selector in the top-right corner -->
     <div class="language-selector">
       <img src="pl-flag.png" alt="Polish" id="plFlag" onclick="changeLanguage('pl')">
       <img src="gb-flag.png" alt="English" id="enFlag" onclick="changeLanguage('en')">
@@ -123,8 +122,8 @@
   <h1>🎮 Discord Konto</h1>
 
   <div class="details">
-    <h2>🔥 Discord Account - 10 zł</h2>
-    <p>
+    <h2 id="price">🔥 Discord Account - 2.56 zł</h2>
+    <p id="desc">
       <span><i>📦</i> <span class="highlight">Nowe konto Discord</span></span><br>
       <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
       <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
@@ -135,40 +134,43 @@
   </div>
 
   <script>
-    // Zmiana języka
+    const exchangeRate = 0.22; // PLN to EUR
+    const pricePLN = 10;
+    const surchargePLN = 0.4;
+
     function changeLanguage(language) {
       localStorage.setItem('language', language);
       translatePage(language);
     }
 
-    // Tłumaczenie strony
     function translatePage(language) {
       if (language === 'pl') {
         document.querySelector('h1').innerText = "🎮 Discord Konto";
         document.querySelector('.buy-button').innerText = "Przejdź do zakupu";
-        document.querySelector('.details h2').innerText = "🔥 Discord Account - 10 zł";
-        document.querySelector('.details p').innerHTML = `
+        document.querySelector('#price').innerText = `🔥 Discord Account - ${pricePLN} zł`;
+        document.querySelector('#desc').innerHTML = `
           <span><i>📦</i> <span class="highlight">Nowe konto Discord</span></span><br>
           <span><i>🛡</i> Pełny dostęp (loginy + hasło)</span><br>
           <span><i>✉️</i> Możliwość zmiany maila</span><br><br>
           <span class="note">⏰ Realizacja: do 24h</span><br>
-          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4zł</span><br>
+          <span><i>💳</i> BLIK / PAYPAL / PSC +${surchargePLN.toFixed(2)}zł</span><br>
         `;
       } else if (language === 'en') {
+        const priceEUR = (pricePLN * exchangeRate).toFixed(2);
+        const surchargeEUR = (surchargePLN * exchangeRate).toFixed(2);
         document.querySelector('h1').innerText = "🎮 Discord Account";
         document.querySelector('.buy-button').innerText = "Go to purchase";
-        document.querySelector('.details h2').innerText = "🔥 Discord Account - 10 PLN";
-        document.querySelector('.details p').innerHTML = `
+        document.querySelector('#price').innerText = `🔥 Discord Account - ${priceEUR} EUR`;
+        document.querySelector('#desc').innerHTML = `
           <span><i>📦</i> <span class="highlight">New Discord account</span></span><br>
           <span><i>🛡</i> Full access (login + password)</span><br>
           <span><i>✉️</i> Ability to change the email</span><br><br>
           <span class="note">⏰ Fulfillment: up to 24h</span><br>
-          <span><i>💳</i> BLIK / PAYPAL / PSC +0.4 PLN</span><br>
+          <span><i>💳</i> BLIK / PAYPAL / PSC +${surchargeEUR} EUR</span><br>
         `;
       }
     }
 
-    // Inicjalizacja
     window.onload = function() {
       const language = localStorage.getItem('language') || 'pl';
       translatePage(language);
